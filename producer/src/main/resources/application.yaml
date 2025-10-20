@@ -1,0 +1,30 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: producer
+  threads:
+    virtual:
+      enabled: true                    # If your ingestion layer waits for Kafka confirms ? virtual threads = huge win.
+  kafka:
+    bootstrap-servers: localhost:9092  # Address of Kafka broker (Official Kafka docker image exposes 9094 for localhost)
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer        # Serialize message key as String
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer # Serialize message value as JSON via Jackson
+      # ---- Delivery guarantees ----
+      acks: all                  # Wait for all in-sync replicas to acknowledge before confirming send (strongest durability)
+      retries: 3                 # Retry transient failures (like leader election or network glitch) before failing, interval is fixed (default 100 ms). The retry mechanism is 100% handled by the Kafka client library.
+      # ---- Performance tuning ----
+      properties:
+        linger.ms: 5             # Wait up to 5ms to batch messages together (reduces network overhead, improves throughput)
+        compression.type: gzip   # Compress messages to save bandwidth (good for large JSON payloads)
+
+producer:
+  kafka:
+    topic: my-topic              # App-level property for injection
+
+logging:
+  level:
+    com.popovrnd.producer: DEBUG  # Custom package logging
+    org.apache.kafka: DEBUG       # Enable low-level producer/consumer logs for debugging (network, retries, etc.)
+    org.springframework: WARN
