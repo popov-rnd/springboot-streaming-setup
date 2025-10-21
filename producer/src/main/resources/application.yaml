@@ -7,7 +7,7 @@ spring:
     virtual:
       enabled: true                    # If your ingestion layer waits for Kafka confirms ? virtual threads = huge win.
   kafka:
-    bootstrap-servers: localhost:9092  # Address of Kafka broker (Official Kafka docker image exposes 9094 for localhost)
+    bootstrap-servers: localhost:9092  # Address of Kafka broker (Official Kafka docker image exposes 9092 for localhost)
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer        # Serialize message key as String
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer # Serialize message value as JSON via Jackson
@@ -21,7 +21,7 @@ spring:
 
 producer:
   kafka:
-    topic: my-topic              # App-level property for injection
+    topic: popov-rnd-topic       # App-level property for injection
 
 logging:
   level:

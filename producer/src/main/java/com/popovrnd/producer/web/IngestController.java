@@ -27,11 +27,10 @@ public class IngestController {
         MyEvent event = MyEvent.of(
                 request.type(),
                 request.source(),
-                request.payload(),
-                request.correlationId()
+                request.payload()
         );
 
-        producer.sendMessage("", event);
+        producer.sendMessage(event.id(), event);
         log.debug("Event has been sent! {}", event);
         return "Sent: " + event;
     }

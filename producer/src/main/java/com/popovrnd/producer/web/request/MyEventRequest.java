@@ -8,6 +8,5 @@ import jakarta.validation.constraints.*;
 public record MyEventRequest(
         @NotBlank String type,        // Logical message type, e.g. "DATA_EXPORT"
         @NotBlank String source,      // Origin service/module (optional for external clients)
-        @NotNull Object payload,      // Core job data — can be any structured object
-        String correlationId          // Optional: to link related requests
+        @NotNull Object payload       // Core job data — can be any structured object
 ) {}
