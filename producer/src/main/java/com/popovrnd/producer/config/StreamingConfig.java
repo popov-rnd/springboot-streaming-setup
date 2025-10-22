@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 
+import java.util.Map;
+
 @Configuration
 public class StreamingConfig {
 
@@ -26,8 +28,12 @@ public class StreamingConfig {
     @Bean
     public NewTopic createTopic(@Value("${producer.kafka.topic}") String topicName) {
         return TopicBuilder.name(topicName)
-                .partitions(3)        // Number of partitions
-                .replicas(1)           // Replication factor
+                .partitions(3)                         // Number of partitions
+                .replicas(1)                            // Replication factor
+                .configs(Map.of(
+                        "retention.ms", "604800000",       // Retention duration per topic 7 days
+                        "cleanup.policy", "delete"                 // Default deletion policy for expired segments
+                ))
                 .build();
     }
 

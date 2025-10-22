@@ -35,6 +35,8 @@ public class EventConsumer {
             ConsumerRecordMetadata meta,                       // Lightweight access to Kafka metadata (topic, partition, offset, timestamp). Useful for logging, tracing, and observability — not required for normal flow.
             @Header(name = KafkaHeaders.RECEIVED_KEY, required = false) String key) {  // Optional Kafka message key (used for partitioning and ordering). Useful for correlation or debugging; often equals event.id(). Can be safely omitted if not needed.
 
+        log.info("Received an event, thread = {}", Thread.currentThread());
+
         // Trace metadata for observability
         // This is a guard to prevent building the log message (and interpolating parameters) when debug logging is disabled.
         // For simple use-cases like this one the check is redundant.

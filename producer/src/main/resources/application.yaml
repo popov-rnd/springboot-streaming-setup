@@ -16,7 +16,7 @@ spring:
       retries: 3                 # Retry transient failures (like leader election or network glitch) before failing, interval is fixed (default 100 ms). The retry mechanism is 100% handled by the Kafka client library.
       # ---- Performance tuning ----
       properties:
-        linger.ms: 5             # Wait up to 5ms to batch messages together (reduces network overhead, improves throughput)
+        linger.ms: 5             # Kafka client waits up to 5ms to batch messages together (reduces network overhead, improves throughput)
         compression.type: gzip   # Compress messages to save bandwidth (good for large JSON payloads)
 
 producer:
@@ -26,5 +26,5 @@ producer:
 logging:
   level:
     com.popovrnd.producer: DEBUG  # Custom package logging
-    org.apache.kafka: DEBUG       # Enable low-level producer/consumer logs for debugging (network, retries, etc.)
+    org.apache.kafka: WARN       # Enable low-level producer/consumer logs for debugging (network, retries, etc.)
     org.springframework: WARN
