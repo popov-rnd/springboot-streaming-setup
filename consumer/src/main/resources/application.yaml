@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: consumer
+  threads:
+    virtual:
+      enabled: true
+  kafka:
+    bootstrap-servers: localhost:9092  # Connect to the same Kafka broker
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer         # Deserialize message key as String
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer  # Deserialize JSON messages into POJOs
+      properties:
+        spring.json.trusted.packages: "*"       # Trust all packages for deserialization (or restrict to your package)
+        spring.json.use.type.headers: false     # Don't look at headers even if present
+        spring.json.value.default.type: com.popovrnd.consumer.service.domain.MyEvent
+      # ---- Consumer group management ----
+      group-id: popov-rnd-group               # All consumers in the same group share load for a topic
+      auto-offset-reset: earliest             # Start from earliest if no committed offset (useful for dev/testing)
+      enable-auto-commit: false               # false - Kafka consumers will not automatically commit message offsets after polling
+                                              # true - Kafka client automatically commits offsets at a regular interval (auto.commit.interval.ms, default = 5 s).
+      # ---- Performance tuning ----
+      fetch.min.bytes: 1                      # Minimum data per fetch request
+      fetch.max.wait.ms: 500                  # Wait up to 500ms to batch messages
+      max-poll-records: 500                   # Limit per-poll batch size (controls processing latency)
+      heartbeat.interval.ms: 3000             # Heartbeat to broker to maintain session
+      session.timeout.ms: 10000               # If no heartbeat for this time, broker considers consumer dead
+    listener:
+      ack-mode: batch                         # Defaults to batch. Spring handles ack per batch.
+      concurrency: 3                          # Process messages in parallel threads (non-blocking with virtual threads); the upper bound for concurrency = number of partitions.
+
+consumer:
+  kafka:
+    topic: popov-rnd-topic                    # App-level property for injection
+
+logging:
+  level:
+    com.popovrnd.consumer: DEBUG  # Custom package logging
+    org.apache.kafka: WARN        # Enable low-level producer/consumer logs for debugging (network, retries, etc.)
+    org.springframework: WARN
